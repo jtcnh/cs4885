@@ -9,6 +9,7 @@ OpenCV Basics
 import cv2 as cv
 
 imagePath = "../images/octopus.jpg"
+KEY_ESCAPE = 27
 
 # import an image
 # img = cv.imread("../images/chungus.png")
@@ -19,11 +20,13 @@ imagePath = "../images/octopus.jpg"
 """
 Open an image in a window
 """
-# key = ord("r")
-# while key != ord("s"):
-#     cv.imshow("Picture", img)
-#     key = cv.waitKey()
-# cv.destroyAllWindows()
+
+def openImage(img):
+    key = ord("r")
+    while key != KEY_ESCAPE:
+        cv.imshow("Opened Image", img)
+        key = cv.waitKey()
+    cv.destroyAllWindows()
 
 
 """
@@ -57,3 +60,46 @@ Open an image in a window
 """
     Image Indexing and Borders
 """
+# img = cv.imread(imagePath)
+# img = img[250:500, 400:700]
+
+# # define border
+# borderSize = 10
+# borderColor = [255, 0, 0]
+
+# img = cv.copyMakeBorder(img, borderSize, borderSize, borderSize, borderSize, cv.BORDER_CONSTANT, value=borderColor)
+
+
+"""
+    Writing out an image
+"""
+# img = cv.imread(imagePath)
+# path = "octopus_copy.png"
+
+# cv.imwrite(path, img)
+
+
+"""
+    Write Text on Image
+"""
+img = cv.imread(imagePath)
+
+# write text
+def text(img, text, 
+        org=(100,225), 
+        font=cv.FONT_HERSHEY_SIMPLEX, 
+        fontScale=1, 
+        color=(255,255,255), 
+        thickness=2,
+        lineType = cv.LINE_AA
+    ):
+    
+    newImg = img.copy() # images are pass by reference, not copies
+    cv.putText(newImg, text, org, font, fontScale, color, thickness, lineType)
+    return newImg
+
+# draw rectangle
+newImg = text(img, "octopus: 98%")
+newImg = cv.rectangle(newImg, (100,250), (900,600), (0,255,0), 3)
+
+openImage(newImg)
