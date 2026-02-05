@@ -3,6 +3,8 @@ import numpy as np
 
 from mvutil import showImage
 
+import cvlib
+
 img = cv.imread('../images/octopus.jpg')
 
 

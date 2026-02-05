@@ -18,10 +18,11 @@ def translate(img, offset=(0,0)):
     return cv.warpAffine(img, M, (col, row))
 
 
-
+# Get Image Center
 def getCenter(img):
     row, col = img.shape
     return ((col-1)/2.0, (row-1)/2.0)
+
 
 # Image Rotation
 def rotate(img, rotation=0):
@@ -78,3 +79,18 @@ def text(img, text,
     newImg = img.copy() # images are pass by reference, not copies
     cv.putText(newImg, text, org, font, fontScale, color, thickness, lineType)
     return newImg
+
+
+# Simple / Average Box Blur
+def simpleBlur(img, blurSize=1):
+    return cv.blur(img, (blurSize,blurSize))
+
+
+# Gaussian Blur
+def gaussianBlur(img, blurSize=1):
+    return cv.GaussianBlur(img, (blurSize,blurSize), 0)
+
+
+# Median Blur
+def medianBlur(img, blurSize=1):
+    return cv.medianBlur(img, blurSize)
