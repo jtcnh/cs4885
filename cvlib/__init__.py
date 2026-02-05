@@ -1,21 +1,11 @@
 """
-Geometric Transformations
-
-Transformations:
-    Affine
-    Perspective
-    Color
-    Brightness
-    Contrast
-    Gamma Correction
-
+Jack Chambers
+CV utility methods libary 'cvlib'
+2/5/2026
 """
-import numpy as np
+
 import cv2 as cv
-
-
-octopus = cv.imread("../images/octopus.jpg")
-img = cv.imread("../images/boat.jpg")
+import numpy as np
 
 
 # Image Translation
@@ -28,12 +18,12 @@ def translate(img, offset=(0,0)):
     return cv.warpAffine(img, M, (col, row))
 
 
-# Image Rotation
+
 def getCenter(img):
     row, col = img.shape
     return ((col-1)/2.0, (row-1)/2.0)
 
-
+# Image Rotation
 def rotate(img, rotation=0):
     row, col = img.shape
     center = getCenter(img)
@@ -50,14 +40,6 @@ def scaleImage(img, scalar=1):
     return cv.resize(img, dim_size, interpolation=cv.INTER_NEAREST)
 
 
-# Color Channels
-# b,g,r = cv.split(img)
-# new_img = cv.merge([b,g,r])
-## Using numpy
-# img[:,:,2] = 0
-# showImage(img)
-
-
 # Brightness / Contrast
 """
 f = img
@@ -66,7 +48,6 @@ b = brightness (additive)
 g = newImg
 g = af+b
 """
-
 def contrastBrightness(img, contrast=1, brightness=1):
     return cv.convertScaleAbs(img, alpha=contrast, beta=brightness)
 
@@ -75,7 +56,6 @@ def contrastBrightness(img, contrast=1, brightness=1):
 """
 p = (I/255)^gamma - 255
 """
-
 def gamma(img, gamma=1):
     # generate a LUT to save on the exp calculations
     lut = np.empty((1, 256), np.uint8)
@@ -83,3 +63,18 @@ def gamma(img, gamma=1):
         lut[0][i] = np.clip(pow(i/255.0, gamma)*255.0, 0, 255)
 
     return cv.LUT(img, lut)
+
+
+# Draw text
+def text(img, text, 
+        org=(100,225), 
+        font=cv.FONT_HERSHEY_SIMPLEX, 
+        fontScale=1, 
+        color=(255,255,255), 
+        thickness=2,
+        lineType = cv.LINE_AA
+    ):
+    
+    newImg = img.copy() # images are pass by reference, not copies
+    cv.putText(newImg, text, org, font, fontScale, color, thickness, lineType)
+    return newImg
