@@ -73,12 +73,25 @@ while (nValidImages < 10) and (key != 27):
 
 
 # Save calibration to file
-ret, iMtx, distort, rotate, translate = cv.calibrateCamera(objPtsArray, imgPtsArray, gray.shape[::-1], None, None)
+ret, iMtx, distort, rotationVectors, translationVectors = cv.calibrateCamera(
+    objPtsArray, 
+    imgPtsArray, 
+    gray.shape[::-1], 
+    None, 
+    None
+)
+
+rotationVectorArray = [rv.tolist() for rv in rotationVectors]
+translationVectorArray = [tv.tolist() for tv in translationVectors]
+
+exportedCalibration = {
+    "float" : ret,
+    "intrinsic_matrix" : iMtx.tolist(), # need to convert to list for json serialize
+    "distortion_coefs" : distort.tolist(),
+    "rotation" : rotationVectorArray,
+    "translate" : translationVectorArray
+}
+
+
 with open("./camera_calibration.json", "w") as calibrationFilePtr:
-    json.dump({
-        "float": ret,
-        "intrinsic_matrix": iMtx.tolist(), # need to convert to list for json serialize
-        "distortion_coefs": distort.tolist(),
-        "rotation": rotate,
-        "translate": translate
-    }, calibrationFilePtr)
+    json.dump(exportedCalibration, calibrationFilePtr)
