@@ -39,7 +39,7 @@ if success == True:
     print(rotationMatrix)
     print(tvec)
 
-loadFile["rotation_matrix"] - rotationMatrix.tolist()
+loadFile["rotation_matrix"] = rotationMatrix.tolist()
 loadFile["translation_vector"] = tvec.tolist()
 
 with open("cameraCalibration.json", "w") as fptr:

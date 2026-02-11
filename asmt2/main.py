@@ -13,12 +13,6 @@ import json
 """
 Corner Calibration
 """
-# Constants
-SAVE_CAL_IMAGES = True
-CALIBRATION_FILE = "cameraCalibration.json"
-IMAGE_NAME = "calibrationImage%d.jpg"
-IMAGE_PATH = "./exportedImages/"
-
 # Variables
 nValidImages = 0
 rowCorners = 9
@@ -28,7 +22,6 @@ imgPtsArray = []
 patternSize = (rowCorners, columnCorners)
 key = ord("k")
 webcam = cv.VideoCapture(0)
-totalImagePath = str.format("%s%s", IMAGE_PATH, IMAGE_NAME)
 #squareSize = 22
 
 # refine stopping criteria
@@ -68,9 +61,8 @@ while (nValidImages < 10) and (key != 27):
         cv.drawChessboardCorners(raw, patternSize, corners2, ret)
 
         # save this calibration image to file
-        if (SAVE_CAL_IMAGES == True):
-            imgPath = str.format(totalImagePath, nValidImages)
-            cv.imwrite(imgPath, raw)
+        imgPath = f"./exportedImages/image{nValidImages}.jpg"
+        cv.imwrite(imgPath, raw)
 
         # show image
         cv.imshow("Image", raw)
@@ -82,11 +74,11 @@ while (nValidImages < 10) and (key != 27):
 
 # Save calibration to file
 ret, iMtx, distort, rotate, translate = cv.calibrateCamera(objPtsArray, imgPtsArray, gray.shape[::-1], None, None)
-with open(CALIBRATION_FILE) as calibrationFilePtr:
+with open("./camera_calibration.json", "w") as calibrationFilePtr:
     json.dump({
-        "Float" : ret,
-        "IntrinsicMatrix" : iMtx,
-        "Distortion" : distort,
-        "Rotation" : rotate,
-        "Translate" : translate
+        "float": ret,
+        "intrinsic_matrix": iMtx.tolist(), # need to convert to list for json serialize
+        "distortion_coefs": distort.tolist(),
+        "rotation": rotate,
+        "translate": translate
     }, calibrationFilePtr)
