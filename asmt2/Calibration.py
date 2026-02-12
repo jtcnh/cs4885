@@ -29,6 +29,47 @@ criteria = (cv.TERM_CRITERIA_EPS + cv.TermCriteria_MAX_ITER, 20, 0.001)
 objectPoints = np.zeros((rowCorners*columnCorners, 3), np.float32)
 objectPoints[:,:2] = np.mgrid[0:rowCorners, 0:columnCorners].T.reshape(-1,2)
 
+
+def LoadCalibration(fileName):
+    with open(fileName, "r") as fptr:
+        load_file = json.load(fptr)
+
+    dist_coefs = np.zeros((4,1))
+    #obj_pts = np.array(actual_points).astype(np.float32)
+    #img_pts = np.array(load_file["img_points"]).astype(np.float32)
+    i_mtx = np.array(load_file['intrinsic_matrix'])
+    dist_coefs = np.array(load_file['distortion_coefs'])
+
+    return {
+        'intrinsic_matrix' : i_mtx,
+        'distortion_coefficients' : dist_coefs
+    }
+
+
+def SaveCalibration(fileName, calibrationDictionary):
+    # export with file ptrs
+    with open(fileName, "w") as calibrationFilePtr:
+        json.dump(calibrationDictionary, calibrationFilePtr)
+
+
+def Undistort(originalImg, calibrationDict):
+    i_mtx = calibrationDict['intrinsic_matrix']
+    dcoefs = calibrationDict['distortion_coefficients']
+
+    h,w = originalImg.shape[:2]
+    newCameraMtx, roi = cv.getOptimalNewCameraMatrix(i_mtx, dcoefs, (w,h), 1, (w,h))
+
+    # undistort
+    newImg = cv.undistort(originalImg, i_mtx, dcoefs, None, newCameraMtx)
+    
+    # crop new image
+    x,y,w,h = roi
+    newImg = newImg[y:y+h, x:x+w]
+    
+    # output new image
+    return newImg
+
+
 # create a calibration function
 def CreateCalibration():
     # get valid images
@@ -84,16 +125,11 @@ def CreateCalibration():
     # convert vector tuple to array
     rotationVectorArray = [rv.tolist() for rv in rotationVectors]
     translationVectorArray = [tv.tolist() for tv in translationVectors]
-
-    # dict for export
-    exportedCalibration = {
+    
+    return {
         "float" : ret,
         "intrinsic_matrix" : iMtx.tolist(), # need to convert to list for json serialize
         "distortion_coefs" : distort.tolist(),
         "rotation" : rotationVectorArray,
         "translate" : translationVectorArray
     }
-
-    # export with file ptrs
-    with open("./camera_calibration.json", "w") as calibrationFilePtr:
-        json.dump(exportedCalibration, calibrationFilePtr)

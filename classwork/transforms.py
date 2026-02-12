@@ -34,10 +34,17 @@ def getCenter(img):
     return ((col-1)/2.0, (row-1)/2.0)
 
 
+# Rotate an image using degrees
 def rotate(img, rotation=0):
     row, col = img.shape
     center = getCenter(img)
-    M = cv.getRotationMatrix2D(center, 180, 1)
+    M = cv.getRotationMatrix2D(center, rotation, 1)
+    return cv.warpAffine(img, M, (col, row))
+
+
+# Rotate an image using a rotation matrix
+def rotateMatrix(img, M):
+    row, col = img.shape
     return cv.warpAffine(img, M, (col, row))
 
 

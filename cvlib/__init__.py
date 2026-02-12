@@ -7,6 +7,16 @@ CV utility methods libary 'cvlib'
 import cv2 as cv
 import numpy as np
 
+# Image Display
+def show(img, frames=-.10, window="Image", breakKey=27):
+    key = ord('r')
+    if frames < 0:
+        while key != breakKey:
+            cv.imshow(window, img)
+            key = cv.waitKey(10)
+    else:
+        cv.imshow(window, img)
+        key = cv.waitKey(frames)
 
 # Image Translation
 def translate(img, offset=(0,0)):
@@ -28,7 +38,12 @@ def getCenter(img):
 def rotate(img, rotation=0):
     row, col = img.shape
     center = getCenter(img)
-    M = cv.getRotationMatrix2D(center, 180, 1)
+    M = cv.getRotationMatrix2D(center, rotation, 1)
+    return cv.warpAffine(img, M, (col, row))
+
+# Rotate an image using a rotation matrix
+def rotateMatrix(img, M):
+    row, col = img.shape
     return cv.warpAffine(img, M, (col, row))
 
 
