@@ -1,3 +1,4 @@
 # Remove pycache files
 **/__pycache__/
+/asmt2/exportedImages/*
 **.jpg
