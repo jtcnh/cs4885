@@ -5,18 +5,18 @@ Assignment 2
 """
 
 import cvlib
-from Calibration import *
+import cvcalibration as cvcal
 
 CAL_FILE = "./camera_calibration.json"
 RAW_IMG = "./selfie.jpg"
 
 # create and save calibration
-thisCal = CreateCalibration()
-SaveCalibration(CAL_FILE, thisCal)
+thisCal = cvcal.CreateCalibration()
+cvcal.SaveCalibration(CAL_FILE, thisCal)
 
 # load calibration and undistort
-savedCal = LoadCalibration(CAL_FILE)
-outputImg = Undistort(RAW_IMG, savedCal)
+savedCal = cvcal.LoadCalibration(CAL_FILE)
+outputImg = cvcal.Undistort(RAW_IMG, savedCal)
 
 # display output image
 cvlib.show(outputImg)
