@@ -38,6 +38,7 @@ def SaveCalibration(fileName, calibrationDictionary):
         json.dump(calibrationDictionary, calibrationFilePtr)
 
 
+#https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html
 def Undistort(originalImg, calibrationDict):
     i_mtx = calibrationDict['intrinsic_matrix']
     dcoefs = calibrationDict['distortion_coefficients']
@@ -49,8 +50,8 @@ def Undistort(originalImg, calibrationDict):
     newImg = cv.undistort(originalImg, i_mtx, dcoefs, None, newCameraMtx)
     
     # crop new image
-    # x,y,w,h = roi
-    # newImg = newImg[y:y+h, x:x+w]
+    x,y,w,h = roi
+    newImg = newImg[y:y+h, x:x+w]
     
     # output new image
     return newImg

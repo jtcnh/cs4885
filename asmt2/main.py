@@ -13,12 +13,17 @@ RAW_IMG_FILE = "./raw_checker.jpg"
 
 # create and save calibration
 thisCal = cvcal.CreateCalibration()
-# cvcal.SaveCalibration(CAL_FILE, thisCal)
+cvcal.SaveCalibration(CAL_FILE, thisCal)
 
 # load calibration and undistort
-# savedCal = cvcal.LoadCalibration(CAL_FILE)
+savedCal = cvcal.LoadCalibration(CAL_FILE)
 rawImg = cv.imread(RAW_IMG_FILE)
-outputImg = cvcal.Undistort(rawImg, thisCal)
+
+# undistort the checkerboard image
+outputImg = cvcal.Undistort(rawImg, savedCal)
 
 # display output image
 cvlib.show(outputImg)
+cv.imwrite('distorted.jpg', outputImg)
+    
+    
